@@ -1,0 +1,58 @@
+                  <!-- DataTales Example -->
+                  <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                      <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#add-modal"> <!-- data-target: target dari tombol tersebut mau diarahkan kemana-->
+                     <!-- <i class = "fas fa-plus"></i> -->
+                      filter
+                    </button>
+                    </div>
+                   
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0" style="display: block;  overflow-x: auto; white-space: nowrap;">
+                          <thead>
+                            <tr>
+                              <th>No</th>
+                              <th>Name</th>
+                            <% for(let i = 0; i< absen.length; i++){ %>
+                              <th><%= absen[i].date_created %></th>
+                            <% } %>
+                          </tr>
+
+                          </thead>
+                          <tbody>
+                            <% if(member[0].length != 0){ %>
+                              <% for(let i = 0; i< member.length; i++){ %>
+                                <tr>
+                                  <td><%=i + 1 %></td>
+                                  <td><%=member[i][0].userName %></td>
+                                    <% for(let j = 0; j< member[i].length; j++){ %>
+                                      <% if(member[i][j].presence == 'ontime'){ %>
+                                        <td >
+                                          <span style="color: #2ecc71;">
+                                            <%= member[i][j].presence %>
+                                          </span>
+                                          </td>
+                                      <% }else if(member[i][j].presence == 'late'){  %>
+                                        <td >
+                                          <span style="color: #ccba2e;">
+                                            <%= member[i][j].presence %>
+                                          </span>
+                                          </td>
+                                        <% } else{ %>
+                                          <td >
+                                            <span style="color: #cc0000;">
+                                              <%= member[i][j].presence %>
+                                            </span>
+                                            </td>
+                                          <% } %>
+                                    <% } %>
+                                </tr>
+                              <% } %>
+                            <% } %>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
