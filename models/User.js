@@ -4,11 +4,11 @@ const {ObjectId} = mongoose.Schema;
 const userSchema = new mongoose.Schema({
     firstName: {
         type: String,
-        required: true //untuk melakukan validasi
+        // required: true //untuk melakukan validasi
       },
     lastName: {
         type: String,
-        required: true 
+        // required: true 
       },
     email: {
         type: String,

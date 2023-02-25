@@ -2,9 +2,13 @@ const router = require('express').Router();
 const UserController = require('../controllers/UserController');
 const QRCodeController = require('../controllers/QRCodeController');
 const AttendanceController = require('../controllers/AttendanceController');
+const CurrentSemester = require('../controllers/CurrentSemester');
 
+// const {uploadSingle, uploadMultiple} = require('../middleware/multer');
 
-const {uploadSingle, uploadMultiple} = require('../middleware/multer')
+//CURRENT SEMESTER
+        router.put('/currentsemester/:_id', CurrentSemester.updateCurrentSemester )
+        router.get('/currentsemester/:_id', CurrentSemester.getCurrentSemester )
 
 
 ////USER & AUTH 
@@ -19,7 +23,7 @@ const {uploadSingle, uploadMultiple} = require('../middleware/multer')
         router.post('/qrcode/', QRCodeController.generateQRCode )
         router.delete('/qrcode/:attendanceId', QRCodeController.deleteQRCode )
         router.put('/qrcode/status/:attendanceId', QRCodeController.updateStatusQRCode ) // alternative deletes
-        router.put('/qrcode/:attendanceId', QRCodeController.updateQRCode ) // alternative deletes
+        router.put('/qrcode/:attendanceId', QRCodeController.updateQRCode )
         router.get('/qrcode/', QRCodeController.getQRCode )
         router.get('/qrcodes/', QRCodeController.getQRCodes )
         router.get('/latestqrcodes/', QRCodeController.getLatestQRCodes ) // get 5 latest qr codes
@@ -27,16 +31,10 @@ const {uploadSingle, uploadMultiple} = require('../middleware/multer')
 // USER ATTENDANCE
         router.post('/postusersattendance/:userId', AttendanceController.postUserAttendance) // kirim absen dari user
     
-        router.post('/edituserattendance/:userId', AttendanceController.editUserAttendance) // update absen dari user
+        router.put('/edituserattendance/:userId', AttendanceController.editUserAttendance) // update absen dari officer
         
-        //nanti bikin res api untuk memberi absen bagi user yang datang terlambat atau absen
-
-        router.get('/getusersallsattendance/', AttendanceController.getUsersAllAttendance) // get semua user punya semua attendance/absen
-        router.get('/getuserallsattendance/:userId', AttendanceController.getUserAllAttendance) // get semua user punya semua attendance/absen tapi di filter. (berdasarkan bulan, semester, tahun)
+        router.get('/getusersallsattendance/', AttendanceController.getUsersAllAttendance) // get semua user punya semua attendance/absen di semester tertentu. ini yg pake di mobile. pake query
     
-        router.get('/getusersfilterattendance/:schoolYear/:semester/', AttendanceController.getUsersFilterAttendance) // get satu user punya semua attendance/absen
-        router.get('/getuserfilterattendance/:userId/:schoolYear/:semester/', AttendanceController.getUserFilterAttendance) // get satu user punya semua attendance/absen
-
-        
+        router.get('/getuserfilterattendance/', AttendanceController.getUserFilterAttendance) // get satu user punya semua attendance/absen. ini yang pake di mobile
 
 module.exports = router;

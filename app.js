@@ -112,9 +112,9 @@ app.use((req, res, next)=>{
 
 //import mongoose
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/db-onlineattendance')
-// mongoose.connect('mongodb://127.0.0.1:27017/db_staycation')
-// mongoose.connect('mongodb+srv://mern-stayction:YjL12suUWmoczy8p@cluster0.mdbpoal.mongodb.net/db_staycation?retryWrites=true&w=majority',
+// mongoose.connect('mongodb://localhost:27017/db-onlineattendance')
+mongoose.connect('mongodb+srv://vocsukapp:m84LQy6BW5EuE0QI@vocs-db.emmvr9k.mongodb.net/?retryWrites=true&w=majority')
+// mongoose.connect('mongodb+srv://vocsukapp:m84LQy6BW5EuE0QI@vocs-db.emmvr9k.mongodb.net/?retryWrites=true&w=majority',
 // {
 //   useNewUrlParser: true,
 //   useUnifiedTopology: true,

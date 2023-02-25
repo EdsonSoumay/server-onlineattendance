@@ -15,11 +15,17 @@
                             <tr>
                               <th>No</th>
                               <th>Name</th>
-                            <% for(let i = 0; i< absen.length; i++){ %>
-                              <th><%= absen[i].date_created %></th>
+                            <% for(let i = 0; i< date.length; i++){ %>
+                              <th>
+                                <%= date[i].date_created %>
+                                <br/>
+                                <%= date[i].absenDateString %>
+                                <br/>
+                                <%= date[i].absenTimeString %>
+                              </th>
                             <% } %>
                           </tr>
-
+                          
                           </thead>
                           <tbody>
                             <% if(member[0].length != 0){ %>

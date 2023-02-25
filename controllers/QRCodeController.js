@@ -1,4 +1,7 @@
 const Attendance = require('../models/Attendance');
+const CONFIG_SOCKET_IO = require('../config/socketapi')
+
+      // CONFIG_SOCKET_IO.io.emit('qrcode-data', Supplier_SocketIo)
 
 module.exports = {
     generateQRCode: async (req, res, next) =>{
@@ -6,25 +9,22 @@ module.exports = {
             const { regBy, QRCodeOnTime, QRCodeLate, description, schoolYear, semester, absenDate} = req.body
             let today = new Date();
 
-            // let date_created = today.toISOString().slice(0, 10)
-            // let time_created = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-            let date_created = ("0" + today.getDate()).slice(-2) + "-" + ("0"+(today.getMonth()+1)).slice(-2) + "-" + today.getFullYear();
-            let time_created = ("0" + today.getHours()).slice(-2) + ":" + ("0" + today.getMinutes()).slice(-2) + ":" + ("0" + today.getSeconds()).slice(-2) ;
+            // let date_created = ("0" + today.getDate()).slice(-2) + "-" + ("0"+(today.getMonth()+1)).slice(-2) + "-" + today.getFullYear();
+            // let time_created = ("0" + today.getHours()).slice(-2) + ":" + ("0" + today.getMinutes()).slice(-2) + ":" + ("0" + today.getSeconds()).slice(-2) ;
            
-            const postAttendance = new Attendance({
-                regBy, date_created, time_created, QRCodeOnTime, QRCodeLate, description, status: true, schoolYear, semester,
-                absenDate: absenDate != null? absenDate: date_created
+            await Attendance.create({
+                regBy, QRCodeOnTime, QRCodeLate, description, status: true, schoolYear, semester,
+                date_created: today, 
+                // time_created,
+                absenDate: absenDate
             })
-            postAttendance.save() // menyimpan data ke database
-            .then(
-                result =>{
-                    res.status(201).json({
-                        message: "Generate QR Code Sucess",
-                        })
-                }
-            )
-            .catch( err =>{
-                console.log('error:', err)
+
+            // const getQRCodes = await Attendance.find({status:true, schoolYear, semester}).sort({'_id': -1})
+            
+            // CONFIG_SOCKET_IO.io.emit('qrcode-data', getQRCodes)
+
+            res.status(201).json({
+            message: "Generate QR Code Sucess",
             })
           } catch (error){
                 console.log("error:",error);
@@ -44,7 +44,7 @@ module.exports = {
             })
             .then(result =>{
                 res.status(201).json({
-                    message: 'Update status QR code Sucess',
+                    message: 'Delete QR code Sucess',
                 })
             })
             .catch((e)=>{
@@ -71,7 +71,7 @@ module.exports = {
             })
             .then(result =>{
                 res.status(201).json({
-                    message: 'Update status QR code Sucess',
+                    message: 'Update QR code Sucess',
                 })
             })
             .catch((e)=>{
@@ -137,8 +137,10 @@ module.exports = {
     },
     getLatestQRCodes: async (req, res, next)=>{
         try {
-            const getQRCodes = await Attendance.find({status:true}).sort({'_id': -1})
+            const { schoolYear, semester} = req.query
+            const getQRCodes = await Attendance.find({status:true, schoolYear, semester}).sort({'_id': -1})
 
+            
             res.status(201).json({
                 message: "Sucessfuly get QR Code",
                 data: getQRCodes

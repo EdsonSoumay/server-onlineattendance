@@ -94,32 +94,59 @@ module.exports = {
                     }
                 }
 
-            const defaultSchoolYear = '2022-2023'
-            const defaultSemester = '2'
+            const defaultSchoolYear = '2021-2022'
+            const defaultSemester = '1'
+           
             // cari semua absen
             let getAttendance; 
-            
             if(schoolYear, semester){
               getAttendance = await Attendance.find({status: true, schoolYear:schoolYear, semester: semester})
+              .sort({absenDate: 1})
             }
             else{
               getAttendance = await Attendance.find({status: true, schoolYear: defaultSchoolYear, semester: defaultSemester})
+             .sort({absenDate: 1})
             }
+
             // cari absen user
             for(let i = 0; i < getAttendance.length; i++){
 
                 let newGetAttendance = getAttendance[i]
-                    const getUserAttendance = await UserAttendance.find({
-                                    attendanceId: getAttendance[i]._id,
-                                })
-                                .populate({path: 'userId', select: 'lastName firstName userName'})
+
+                const getUserAttendance = await UserAttendance.find({attendanceId: getAttendance[i]._id})
+                                         .populate({path: 'userId', select: 'lastName firstName userName'})
             
-                                let arrayUserGetAttendance = []
-                                for(let i = 0; i < getUserAttendance.length; i++){
-                                    arrayUserGetAttendance.push(getUserAttendance[i])
-                                }
-                            newGetAttendance.userAttendance = arrayUserGetAttendance;
-                            arrayGetAttendance.push(newGetAttendance)
+                let arrayUserGetAttendance = []
+                for(let i = 0; i < getUserAttendance.length; i++){
+                    arrayUserGetAttendance.push(getUserAttendance[i])
+                }
+  
+                newGetAttendance.userAttendance = arrayUserGetAttendance;
+                console.log("typeof:", typeof getAttendance[i].absenDate);
+
+                //set up date
+                let day = getAttendance[i].absenDate.toLocaleDateString('en-US', {weekday: 'long'});
+                let dateNumber = getAttendance[i].absenDate.toLocaleDateString('en-US', {day: '2-digit'});
+                let month = getAttendance[i].absenDate.toLocaleDateString('en-US', {month: '2-digit'});
+                let year = getAttendance[i].absenDate.toLocaleDateString('en-US', {year: 'numeric'});
+                let formattedDate = day + ', ' + dateNumber + ' - ' + month + ' - ' + year;
+                //end set up date
+
+                //set up time GMT 8 (WITA)
+                let utc_hours = getAttendance[i].absenDate.getUTCHours();
+                utc_hours += 8;
+                getAttendance[i].absenDate.setUTCHours(utc_hours);
+                let dateString = getAttendance[i].absenDate.toISOString();
+                let timeString = dateString.slice(11, 23) + dateString.slice(26, 29);
+                //end set up time
+
+
+                newGetAttendance.absenDateString = formattedDate;
+             
+                newGetAttendance.absenTimeString = timeString;
+                
+
+                arrayGetAttendance.push(newGetAttendance)
             }
 
 
@@ -133,7 +160,7 @@ module.exports = {
                 
                 for(let j = 0; j < arrayGetAttendance.length; j ++){
 
-                   const filterArray = arrayGetAttendance[j].userAttendance.filter(e =>e.userId.userName == getMember[i].userName);
+                   const filterArray = arrayGetAttendance[j].userAttendance.filter(e =>e.userId?.userName == getMember[i].userName);
             
                    if(filterArray){
 
@@ -160,14 +187,15 @@ module.exports = {
                 newArrayobject2.push(arrayObject)
             }
             
-            console.log(newArrayobject2);
+            // console.log("new array obj 2:",newArrayobject2);
+            // console.log("aray get attendance:",arrayGetAttendance[0].absenDate.day);
 
             const alertMessage = req.flash('alertMessage');
             const alertStatus = req.flash('alertStatus');
             const alert = { message: alertMessage, status: alertStatus}
             res.render('admin/absen/view_absen' ,{
 
-                absen: arrayGetAttendance, 
+                date: arrayGetAttendance, 
                 member: newArrayobject2,
                 alert, 
                 action: 'view',
@@ -184,27 +212,10 @@ module.exports = {
           }
     },
 
-
-    
     editAbsen: async (req, res) =>{
-        // try {
-        //     const {id, name} = req.body;
-        //     const category =  await Category.findOne({_id:id});
-        //     category.name = name;
-        //     await category.save();
-        //     req.flash('alertMessage', 'Success Update Category');
-        //     req.flash('alertStatus', 'success');
-        //     // console.log("Category:",category)
-        //     res.redirect('/admin/category');
-        // } catch (error) {
-        //     req.flash('alertMessage', `${error.message}`); // `$error.message` = `${error.message}`  (sama sja kek bgini)
-        //     req.flash('alertStatus', 'danger');
-        //     res.redirect('/admin/category');
-        // }
+       
     },
 
-
- 
     viewMember:  async (req, res) =>{
         try {
             const member = await Member.find({isAccepted: true})

@@ -4,11 +4,11 @@ const mongoose = require('mongoose');
 const attendaceSchema = new mongoose.Schema({
     time_created:{
         type: String,
-        required: true //untuk melakukan validasi
+        // required: true //untuk melakukan validasi
     },
     date_created:{
         type: String,
-        required: true
+        // required: true
     },
     schoolYear:{
         type: String,
@@ -47,8 +47,14 @@ const attendaceSchema = new mongoose.Schema({
         required: true,
     },
     absenDate:{
+        type: Date
+    },
+    absenDateString:{
         type: String
-    }
+    },
+    absenTimeString:{
+        type: String
+    },
 })
 
 module.exports = mongoose.model('Attendance', attendaceSchema)

@@ -5,18 +5,22 @@ const Mailgen = require('mailgen');
 
 module.exports = {
     registration: async (req, res, next) =>{
-    
+    console.log(req.body)
         try {
 
             //get data from req.body
-            const { firstName, lastName, email, userName, password} = req.body
+            const { 
+                // firstName, lastName, 
+                email, userName, password} = req.body
             
             //cari apakah email sudah terdaftar di user?
-            const userEmail = User.findOne({email: email, isAccepted: true})
+            const _userName = await User.findOne({userName, isAccepted: true})
 
-            if(userEmail){
+            console.log("user Name:",_userName)
+
+            if(_userName){
                 return res.status(200).json({
-                    message: "Email has been register",
+                    message: "UserName has been register",
                     })
             }
 
@@ -26,7 +30,10 @@ module.exports = {
             //jika userName dan email tidak terdaftar, baru bisa registrasi
             if(users.length == 0){
                     const registUser = new User({
-                            firstName, lastName, email, userName, password, isActive: false, isAccepted: false , role: 'member'
+                            // firstName, lastName, 
+                            email, userName, password, 
+                            isActive: true, isAccepted: true, 
+                            role: 'member'
                     })
                     
                     bcrypt.hash(req.body.password, 10, (error, hashedPassword)=> {
@@ -34,20 +41,11 @@ module.exports = {
                         registUser.set('password', hashedPassword);
                         registUser.save(error=> {
                           if(error) {return next(error);}
-                          return res.status(200).json(registUser);
+                          return res.status(200).json({
+                            message: "Registration Success",
+                          });
                         })
                       });
-                    // registUser.save() // menyimpan data ke database
-                    //     .then(
-                    //         result =>{
-                    //             res.status(201).json({
-                    //                 message: "Registration Success",
-                    //                 })
-                    //         }
-                    //     )
-                    //     .catch( err =>{
-                    //         console.log('error:', err)
-                    //     })
             }
             else{
                 res.status(200).json({
@@ -56,7 +54,9 @@ module.exports = {
             }
 
           } catch (error){
-                console.log("error:",error);
+            res.status(500).json({
+                message: "Server error",
+                })
           }
     },
     login: async (req, res, next) =>{
@@ -71,7 +71,19 @@ module.exports = {
             if (!validate) {
                 return res.status(200).json({ message: 'wrong password' });
             }
-            res.status(201).json({ message: 'user successfuly login' })
+
+            console.log("user._id:",user._id);
+            res.status(201).json({ 
+                message: 'user successfuly login', 
+                role: `${user.role}`,
+                status: `${user.isActive}`,
+                division: `${user.division}`,
+                id: `${user._id}`,
+                email: `${user.email}`,
+                firstName: `${user.firstName}`,
+                lastName: `${user.lastName}`,
+                
+            })
           } catch (error){
                 console.log("error:",error);
                 res.status(500).json({ message: error })
@@ -119,24 +131,42 @@ module.exports = {
     },
 
     updateUser: async (req, res, next) =>{
+        console.log("back end hit")
+      console.log(req.body)
         try {
             const { userId} = req.params;
-            const { firstName, lastName, email, password} = req.body
-
+            const { firstName, lastName, email, password, division} = req.body
+            console.log("first name di luar:",firstName);
             await User.findOne({_id: userId })
             .then((update)=>{
-                update.password = password
-                update.firstName = firstName
-                update.lastName = lastName
-                update.email = email
+                // console.log("email:", email !== '' && email !== undefined ? email : update.email)
+                console.log("firstname:", firstName !== '' && firstName !== undefined ? firstName : update.firstName)
+                // update.password = password !== '' || undefined ? password : update.password
+                const hashedPassword = password !== '' && password !== undefined ? bcrypt.hashSync(password, 10) : update.password;
+                update.password = hashedPassword;
+                update.firstName = firstName !== '' && firstName !== undefined ? firstName : update.firstName
+                update.lastName = lastName !== '' && lastName !== undefined ? lastName : update.lastName
+                update.email = email !== '' && email !== undefined ? email : update.email
+                update.division = division !== '' && division !== undefined ? division : update.division
                 return update.save()
             })
             .then(result =>{
+                console.log("result:",result)
                 res.status(201).json({
                     message: 'Update user Sucess',
+                    role: `${result.role}`,
+                    status: `${result.isActive}`,
+                    division: `${result.division}`,
+                    id: `${result._id}`,
+                    email: `${result.email}`,
+                    firstName: `${result.firstName}`,
+                    lastName: `${result.lastName}`,
+                    password: `${result.password}`,
+                    userName: `${result.userName}`,
                 })
             })
             .catch((e)=>{
+                // console.log("error:",e)
                 res.status(200).json({
                     message: 'user is not found',
                 })
