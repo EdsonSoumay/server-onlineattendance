@@ -32,8 +32,8 @@ app.use((req, res, next)=>{
 
 //import mongoose
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:27017/db-onlineattendance')
-// mongoose.connect('mongodb+srv://vocsukapp:m84LQy6BW5EuE0QI@vocs-db.emmvr9k.mongodb.net/?retryWrites=true&w=majority')
+// mongoose.connect('mongodb://localhost:27017/db-onlineattendance')
+mongoose.connect('mongodb+srv://vocsukapp:m84LQy6BW5EuE0QI@vocs-db.emmvr9k.mongodb.net/?retryWrites=true&w=majority')
 // mongoose.connect('mongodb+srv://vocsukapp:m84LQy6BW5EuE0QI@vocs-db.emmvr9k.mongodb.net/?retryWrites=true&w=majority',
 // {
 //   useNewUrlParser: true,
