@@ -16,7 +16,7 @@ module.exports = {
             //cari apakah email sudah terdaftar di user?
             const _userName = await User.findOne({userName, isAccepted: true})
 
-            console.log("user Name:",_userName)
+            // console.log("user Name:",_userName)
 
             if(_userName){
                 return res.status(200).json({
@@ -72,7 +72,7 @@ module.exports = {
                 return res.status(200).json({ message: 'wrong password' });
             }
 
-            console.log("user._id:",user._id);
+            // console.log("user._id:",user._id);
             res.status(201).json({ 
                 message: 'user successfuly login', 
                 role: `${user.role}`,
@@ -100,7 +100,6 @@ module.exports = {
                         update.set('password', hashedPassword);
                         update.save()
                     });
-                    // return update.save()
                 })
                 .then(result =>{
                     res.status(201).json({
@@ -139,9 +138,7 @@ module.exports = {
             console.log("first name di luar:",firstName);
             await User.findOne({_id: userId })
             .then((update)=>{
-                // console.log("email:", email !== '' && email !== undefined ? email : update.email)
                 console.log("firstname:", firstName !== '' && firstName !== undefined ? firstName : update.firstName)
-                // update.password = password !== '' || undefined ? password : update.password
                 const hashedPassword = password !== '' && password !== undefined ? bcrypt.hashSync(password, 10) : update.password;
                 update.password = hashedPassword;
                 update.firstName = firstName !== '' && firstName !== undefined ? firstName : update.firstName
@@ -166,7 +163,6 @@ module.exports = {
                 })
             })
             .catch((e)=>{
-                // console.log("error:",e)
                 res.status(200).json({
                     message: 'user is not found',
                 })
@@ -179,8 +175,8 @@ module.exports = {
 
     sendEmail: async(req, res, next) =>{
                 try {
-                    const EMAIL = 'rumputpalsu123@gmail.com'
-                    const PASSWORD = 'vjaelhdnhvqguwkn'
+                    const EMAIL = 'vocs.uk.app@gmail.com'
+                    const PASSWORD = 'rzjmuhufeqmagrph'
 
                 const { userEmail, userName, token } = req.body;
 
@@ -214,17 +210,6 @@ module.exports = {
                 let response = {
                     body: {
                         name : `Your Token: ${token}`
-                        // intro: `Your Token: ${token}`,
-                        // table : {
-                        //     data : [
-                        //         {
-                        //             item : "Nodemailer Stack Book",
-                        //             description: "A Backend application",
-                        //             price : "$10.99",
-                        //         }
-                        //     ]
-                        // },
-                        // outro: "Looking forward to do more business"
                     }
                 }
 

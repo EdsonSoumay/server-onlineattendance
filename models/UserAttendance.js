@@ -3,7 +3,8 @@ const mongoose = require('mongoose');
 
 const userAttendanceSchema = new mongoose.Schema({
     date_scan:{
-        type: String,
+        // type: String,
+        type: Date,
         // required: true //untuk melakukan validasi
     },
     time_scan:{
@@ -14,9 +15,6 @@ const userAttendanceSchema = new mongoose.Schema({
         type: ObjectId, // untuk menangkap relasi dari model item
         ref: 'User'
     },
-    // userId:{
-    //     type: String, // untuk menangkap relasi dari model item
-    // },
     attendanceId:{
         type: ObjectId, // untuk menangkap relasi dari model item
         ref: 'Attendance'

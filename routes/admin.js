@@ -1,6 +1,5 @@
 const router = require('express').Router();
 const adminController = require('../controllers/adminController');
-const {uploadSingle, uploadMultiple} = require('../middleware/multer')
 const auth = require('../middleware/auth');
 
 router.get('/signin', adminController.viewSignin);
@@ -18,13 +17,10 @@ router.delete('/member/:id', adminController.deleteMember); // Delete member (ac
 router.put('/member/status/:id', adminController.updateStatusMember); // Delete member (active instead inactive)
 router.put('/registeredmember/:id/:username/:email', adminController.AcceptMember); // Delete member (active instead inactive)
 
-
 //enpoint reset password
 router.put('/member/password/:id', adminController.resetPasswordMember); // Delete member (active instead inactive)
 
 //enpoint update role
 router.put('/member/role/:id', adminController.updateRoleMember); // Delete member (active instead inactive)
-
-
 
 module.exports = router;

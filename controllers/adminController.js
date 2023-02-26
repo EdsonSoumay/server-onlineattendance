@@ -153,6 +153,7 @@ module.exports = {
             // cocokan dengan nama member
             const getMember = await Member.find({isActive: true})
 
+            console.log("get member:",getMember);
             let newArrayobject2 = []
             
             for(let i = 0; i < getMember.length; i++){
@@ -168,6 +169,8 @@ module.exports = {
                         arrayObject.push({
                             userId:getMember[i]._id,
                             userName:getMember[i].userName,
+                            firstName:getMember[i].firstName,
+                            lastName:getMember[i].lastName,
                             presence:filterArray[0].presence,
                             date: arrayGetAttendance[j].date_created
                         })
@@ -177,6 +180,8 @@ module.exports = {
                         arrayObject.push({
                             userId:getMember[i]._id,
                             userName:getMember[i].userName,
+                            firstName:getMember[i].firstName,
+                            lastName:getMember[i].lastName,
                             presence:'absen',
                             date: arrayGetAttendance[j].date_created
                         })
@@ -187,7 +192,7 @@ module.exports = {
                 newArrayobject2.push(arrayObject)
             }
             
-            // console.log("new array obj 2:",newArrayobject2);
+            console.log("new array obj 2:",newArrayobject2);
             // console.log("aray get attendance:",arrayGetAttendance[0].absenDate.day);
 
             const alertMessage = req.flash('alertMessage');

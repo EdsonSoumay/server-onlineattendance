@@ -15,6 +15,7 @@
                             <tr>
                               <th>No</th>
                               <th>Name</th>
+                              <th>Full Name</th>
                             <% for(let i = 0; i< date.length; i++){ %>
                               <th>
                                 <%= date[i].date_created %>
@@ -33,6 +34,7 @@
                                 <tr>
                                   <td><%=i + 1 %></td>
                                   <td><%=member[i][0].userName %></td>
+                                  <td><%=member[i][0].firstName%> <%=member[i][0].lastName %></td>
                                     <% for(let j = 0; j< member[i].length; j++){ %>
                                       <% if(member[i][j].presence == 'ontime'){ %>
                                         <td >

@@ -4,12 +4,9 @@ const QRCodeController = require('../controllers/QRCodeController');
 const AttendanceController = require('../controllers/AttendanceController');
 const CurrentSemester = require('../controllers/CurrentSemester');
 
-// const {uploadSingle, uploadMultiple} = require('../middleware/multer');
-
 //CURRENT SEMESTER
         router.put('/currentsemester/:_id', CurrentSemester.updateCurrentSemester )
         router.get('/currentsemester/:_id', CurrentSemester.getCurrentSemester )
-
 
 ////USER & AUTH 
         router.post('/registration', UserController.registration )
@@ -30,11 +27,8 @@ const CurrentSemester = require('../controllers/CurrentSemester');
 
 // USER ATTENDANCE
         router.post('/postusersattendance/:userId', AttendanceController.postUserAttendance) // kirim absen dari user
-    
         router.put('/edituserattendance/:userId', AttendanceController.editUserAttendance) // update absen dari officer
-        
         router.get('/getusersallsattendance/', AttendanceController.getUsersAllAttendance) // get semua user punya semua attendance/absen di semester tertentu. ini yg pake di mobile. pake query
-    
         router.get('/getuserfilterattendance/', AttendanceController.getUserFilterAttendance) // get satu user punya semua attendance/absen. ini yang pake di mobile
 
 module.exports = router;

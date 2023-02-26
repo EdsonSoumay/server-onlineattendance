@@ -1,35 +1,21 @@
 const Attendance = require('../models/Attendance');
 const UserAttendance = require('../models/userAttendance');
 const Member = require('../models/User');
-const userAttendance = require('../models/userAttendance');
 
 
 module.exports = {
     postUserAttendance: async (req, res, next) =>{
-        console.log("post user attendance:",req.body)
+        // console.log("post user attendance:",req.body)
         try {
-            // const { QRCode, attendanceId, schoolYear } = req.body
             const { QRCode} = req.body
             const { userId } = req.params
             
-            let today = new Date();
-            // let date_scan = today.toISOString().slice(0, 10)
-            // let time_scan = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-            let date_scan = ("0" + today.getDate()).slice(-2) + "-" + ("0"+(today.getMonth()+1)).slice(-2) + "-" + today.getFullYear();
-            let time_scan = ("0" + today.getHours()).slice(-2) + ":" + ("0" + today.getMinutes()).slice(-2) + ":" + ("0" + today.getSeconds()).slice(-2) ;
-           
             //validasi value dari qrCode
-            // const getAttendanceOnTime = await Attendance.findOne({QRCodeOnTime: QRCode, _id:attendanceId})
-            // const getAttendanceLate = await Attendance.findOne({QRCodeLate: QRCode, _id:attendanceId})
          
             const getAttendanceOnTime = await Attendance.findOne({QRCodeOnTime: QRCode})
             const getAttendanceLate = await Attendance.findOne({QRCodeLate: QRCode})
          
-            console.log("on time:",getAttendanceOnTime)
-            console.log("on Late:",getAttendanceLate)
             //check jika user sudah mengisi absen atau belum
-            // const userAttendance = await UserAttendance.findOne({attendanceId:attendanceId, userId:userId })
-
             const userAttendance = await UserAttendance.findOne({
                 attendanceId:getAttendanceOnTime? getAttendanceOnTime._id : getAttendanceLate._id, 
                 userId:userId
@@ -42,7 +28,8 @@ module.exports = {
             }
 
                 await UserAttendance.create({
-                    date_scan, time_scan, userId: userId, 
+                    date_scan: new Date(), 
+                     userId: userId, 
                     presence: getAttendanceOnTime? getAttendanceOnTime.QRCodeOnTime: getAttendanceLate.QRCodeLate, 
                     attendanceId:getAttendanceOnTime? getAttendanceOnTime.id : getAttendanceLate.id, 
                     // schoolYear: schoolYear
@@ -61,11 +48,9 @@ module.exports = {
             const { presence, attendanceId, schoolYear, reg_by } = req.body
             const { userId } = req.params
             
-            console.log("edit:",req.body)
+            // console.log("edit:",req.body)
 
             let today = new Date();
-            // let date_scan = ("0" + today.getDate()).slice(-2) + "-" + ("0"+(today.getMonth()+1)).slice(-2) + "-" + today.getFullYear();
-            let time_scan = ("0" + today.getHours()).slice(-2) + ":" + ("0" + today.getMinutes()).slice(-2) + ":" + ("0" + today.getSeconds()).slice(-2) ;
            
             //validasi value dari qrCode
             const getAttendance = await Attendance.findOne({_id:attendanceId})
@@ -77,9 +62,11 @@ module.exports = {
                 await UserAttendance.create({
                    userId: userId, presence: presence, 
                    attendanceId:getAttendance.id, 
+                   reg_by : reg_by,
+                   update_time : today
                 //    schoolYear: schoolYear,
-                   date_scan: null,
-                   time_scan: null
+                //    date_scan: null,
+                //    time_scan: null
                 })
                 return res.status(201).json({
                     message: "Sucessfuly Edit User Attendance (create baru)",
@@ -126,16 +113,6 @@ module.exports = {
                 semester: semester?semester:defaultSemester
             }).sort({absenDate: 1})
 
-            // // cari semua absen
-            // let getAttendance; 
-            // if(schoolYear, semester){
-            //   getAttendance = await Attendance.find({status: true, schoolYear:schoolYear, semester: semester})
-            //   .sort({absenDate: 1})
-            // }
-            // else{
-            //   getAttendance = await Attendance.find({status: true, schoolYear: defaultSchoolYear, semester: defaultSemester})
-            //  .sort({absenDate: 1})
-            // }
 
             // cari absen user
             for(let i = 0; i < getAttendance.length; i++){
@@ -167,12 +144,8 @@ module.exports = {
                 let dateString = getAttendance[i].absenDate.toISOString();
                 let timeString = dateString.slice(11, 23) + dateString.slice(26, 29);
                 //end set up time
-
-
                 newGetAttendance.absenDateString = formattedDate;
-             
                 newGetAttendance.absenTimeString = timeString;
-                
                 arrayGetAttendance.push(newGetAttendance)
             }
 
@@ -187,7 +160,6 @@ module.exports = {
                 
                 for(let j = 0; j < arrayGetAttendance.length; j ++){
 
-                //    const filterArray = arrayGetAttendance[j].userAttendance.filter(e =>e.userId.userName == getMember[i].userName);
                    const filterArray = arrayGetAttendance[j].userAttendance.filter(e =>e.userId?.userName == getMember[i].userName);
 
                    if(filterArray){
@@ -219,8 +191,7 @@ module.exports = {
                 newArrayobject2.push(arrayObject)
             }
             
-            console.log("new array obj 2:",newArrayobject2);
-            // console.log("aray get attendance:",arrayGetAttendance[0].absenDate.day);
+            // console.log("new array obj 2:",newArrayobject2);
                
               res.status(201).json({
                   message: "Sucessfuly get User Attendance",
@@ -268,7 +239,6 @@ module.exports = {
                 
                 //kondisi for filter
                 if(arrayUserGetAttendance.length  != 0){
-                //    if(arrayUserGetAttendance[0].presence == 'late'){
                    if(arrayUserGetAttendance[0].presence.includes('late')){
                         late = 1 + late
                    }
@@ -300,15 +270,11 @@ module.exports = {
                   let timeString = dateString.slice(11, 23) + dateString.slice(26, 29);
                   //end set up time
   
-  
                   newGetAttendance.absenDateString = formattedDate;
-               
                   newGetAttendance.absenTimeString = timeString;
                 // set up date and time
 
-
                  newGetAttendance.userAttendance = arrayUserGetAttendance;
-
                 arrayGetAttendance.push(newGetAttendance)
             }
 

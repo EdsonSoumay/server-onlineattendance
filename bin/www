@@ -12,8 +12,6 @@ var http = require('http');
  * Get port from environment and store in Express.
  */
 
-let socketapi = require("../config/socketapi"); // <== Add this line
-
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
@@ -24,19 +22,6 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
-socketapi.io.attach(server, {
-  transports: ["websocket", "polling"],
-  methods: ["GET", "POST", "PUT", "DELETE"],
-
-  // transports:['polling'],
-  // pingInterval: 25000,
-  // pingTimeout: 5000,
-  cors:{
-    cors: {
-      origin: "http://localhost:3000"
-    }
-  }
-}); // <== Also add this line
 
 /**
  * Listen on provided port, on all network interfaces.

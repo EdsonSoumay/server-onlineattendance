@@ -7,7 +7,8 @@ const attendaceSchema = new mongoose.Schema({
         // required: true //untuk melakukan validasi
     },
     date_created:{
-        type: String,
+        type: Date,
+        // type: string,
         // required: true
     },
     schoolYear:{
